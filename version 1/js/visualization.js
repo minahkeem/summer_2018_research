@@ -30,7 +30,9 @@ function findUnigramDocRange(data) {
 
 //create and label each line (unigram) of heatmap
 function drawUnigramLines(data) {
-    var heat_map = d3.select("#heat_map");
+    var heat_map = d3.select("body")
+        .select(".flex")
+        .select("#heat_map");
     
     //column titles: year
     var cols = heat_map.append("svg")
@@ -47,7 +49,7 @@ function drawUnigramLines(data) {
         col_year++;
     }
         
-    var line = heat_map.selectAll("svg")
+    var line = heat_map.selectAll("svg.lines")
         .data(data)
         .enter()
         .append("svg")
@@ -78,6 +80,24 @@ function drawUnigramLines(data) {
     var colorInterpolate = d3.scaleLinear()
         .domain(valRange)
         .range([0,1]);
+    
+    //append colored rectangles to each word line
+    line.selectAll("rect")
+        .data((d) => {
+            return d.total_count
+        })
+        .enter()
+        .append("rect")
+        .attr("x", (d) => {
+            return rect_pos[d.year];
+        })
+        .attr("y", 0)
+        .attr("width", 75)
+        .attr("height", 25)
+        .attr("fill", (d) => {
+            return colorScale(colorInterpolate(d.count));
+        })
+    
     //create and display color legend on page
     var legend = d3.select("#legend")
         .append("svg")
@@ -116,11 +136,6 @@ function drawUnigramLines(data) {
         .attr("x", 25)
         .attr("y", 420)
         .text(valRange[0]);
-    /*for each unigram line:
-        -set margin for word|heat map squares
-        -write in the word on the left side
-         for each year in total_counts:
-            -draw a square with color gradient*/
 }
 
 function main() {
