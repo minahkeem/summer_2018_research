@@ -1,0 +1,27 @@
+body {
+    font-family:"Trebuchet MS", Helvetica, sans-serif;
+}
+
+h1 {
+    text-align:center;
+}
+
+.flex {
+    display:flex;
+    flex-direction:row;
+}
+
+#heat_map {
+    text-align:center;
+}
+
+#legend {
+    text-align:center;
+    margin-right:50px;
+    margin-left:10px;
+    position:fixed;
+}
+
+#legend-title {
+    margin-bottom:0px;
+}
