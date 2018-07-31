@@ -65,7 +65,7 @@ function drawUnigramLines(data) {
         .attr("x", left_margin-10)
         .attr("y", 20)
         .text((d) => {
-            return d.word;
+            return d.unigram;
         })
     
     //create color range for the squares
@@ -76,7 +76,7 @@ function drawUnigramLines(data) {
     var colorScale = d3.scaleLinear()
         .domain(colorRange)
         .range(colors)
-        .interpolate(d3.interpolateHcl);
+        .interpolate(d3.interpolateRgb);
     var colorInterpolate = d3.scaleLinear()
         .domain(valRange)
         .range([0,1]);
@@ -139,7 +139,7 @@ function drawUnigramLines(data) {
 }
 
 function main() {
-    d3.json("/final.json", (err, data) => {
+    d3.json("/vis_v1.json", (err, data) => {
         if(err) {
             console.log("Error loading JSON file");
         }

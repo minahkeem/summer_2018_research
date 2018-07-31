@@ -16,18 +16,6 @@ const rect_pos = {
     2017: left_margin+750
 };
 
-//returns array of all doc_count values
-function findUnigramDocRange(data) {
-    var arr = [];
-    for(var i=0; i < data.length; i++) {
-        var tot_count = data[i].total_count
-        for(var j=0; j<tot_count.length; j++) {
-            arr.push(tot_count[j].count)
-        }
-    }
-    return d3.extent(arr)
-}
-
 //create and label each line (unigram) of heatmap
 function drawUnigramLines(data) {
     var heat_map = d3.select("body")
@@ -65,26 +53,25 @@ function drawUnigramLines(data) {
         .attr("x", left_margin-10)
         .attr("y", 20)
         .text((d) => {
-            return d.word;
+            return d.unigram;
         })
     
     //create color range for the squares
-    var valRange = findUnigramDocRange(data)
-    var colors = ["#ffffff", "#003366"];
+    var colors = ["#ffffff", "#800000"];
     var colorRange = d3.range(0,1,1);
     colorRange.push(1);
     var colorScale = d3.scaleLinear()
         .domain(colorRange)
         .range(colors)
-        .interpolate(d3.interpolateHcl);
+        .interpolate(d3.interpolateRgb);
     var colorInterpolate = d3.scaleLinear()
-        .domain(valRange)
+        .domain([0,1])
         .range([0,1]);
     
     //append colored rectangles to each word line
     line.selectAll("rect")
         .data((d) => {
-            return d.total_count
+            return d.proportion
         })
         .enter()
         .append("rect")
@@ -95,7 +82,7 @@ function drawUnigramLines(data) {
         .attr("width", 75)
         .attr("height", 25)
         .attr("fill", (d) => {
-            return colorScale(colorInterpolate(d.count));
+            return colorScale(colorInterpolate(d.normalized_count));
         })
     
     //create and display color legend on page
@@ -112,7 +99,7 @@ function drawUnigramLines(data) {
         .attr("y2", "100%");
     gradient.append("stop")
         .attr("offset", "0%")
-        .attr("stop-color", "#003366");
+        .attr("stop-color", "#800000");
     gradient.append("stop")
         .attr("offset", "100%")
         .attr("stop-color", "#ffffff");
@@ -129,17 +116,17 @@ function drawUnigramLines(data) {
         .attr("alignment-baseline", "hanging")
         .attr("x", 25)
         .attr("y", 20)
-        .text(valRange[1]);
+        .text("1");
     legend.append("text")
         .attr("text-anchor", "start")
         .attr("alignment-baseline", "baseline")
         .attr("x", 25)
         .attr("y", 420)
-        .text(valRange[0]);
+        .text("0");
 }
 
 function main() {
-    d3.json("/final.json", (err, data) => {
+    d3.json("/vis_v2.json", (err, data) => {
         if(err) {
             console.log("Error loading JSON file");
         }
