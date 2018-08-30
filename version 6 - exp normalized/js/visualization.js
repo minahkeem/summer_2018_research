@@ -59,7 +59,7 @@ function drawHeatMap(data) {
     //append colored rectangles to each line
     line.selectAll("rect")
         .data((d) => {
-            return d.proportion;
+            return d.total_count;
         })
         .enter()
         .append("rect")
@@ -70,12 +70,12 @@ function drawHeatMap(data) {
         .attr("width", 75)
         .attr("height", line_h)
         .attr("fill", (d) => {
-            return colorScale(colorInterpolate(d.normalized_count));
+            return colorScale(colorInterpolate(d.count));
         })
 }
 
 function main() {
-    d3.json("/vis_v2.json", (err, data) => {
+    d3.json("/proportions.json", (err, data) => {
         if(err) {
             console.log("Error loading JSON file");
         }

@@ -53,14 +53,15 @@ function drawUnigramLines(data) {
         .attr("x", left_margin-10)
         .attr("y", 20)
         .text((d) => {
-            return d.unigram;
+            return d.word;
         })
     
     //create color range for the squares
     var colors = ["#ffffff", "#800000"];
     var colorRange = d3.range(0,1,1);
     colorRange.push(1);
-    var colorScale = d3.scaleLinear()
+    var colorScale = d3.scalePow()
+        .exponent(0.5)
         .domain(colorRange)
         .range(colors)
         .interpolate(d3.interpolateRgb);
@@ -71,7 +72,7 @@ function drawUnigramLines(data) {
     //append colored rectangles to each word line
     line.selectAll("rect")
         .data((d) => {
-            return d.proportion
+            return d.total_count
         })
         .enter()
         .append("rect")
@@ -82,7 +83,7 @@ function drawUnigramLines(data) {
         .attr("width", 75)
         .attr("height", 25)
         .attr("fill", (d) => {
-            return colorScale(colorInterpolate(d.normalized_count));
+            return colorScale(colorInterpolate(d.count));
         })
     
     //create and display color legend on page
@@ -126,7 +127,7 @@ function drawUnigramLines(data) {
 }
 
 function main() {
-    d3.json("/vis_v2.json", (err, data) => {
+    d3.json("/proportions.json", (err, data) => {
         if(err) {
             console.log("Error loading JSON file");
         }
@@ -135,6 +136,10 @@ function main() {
             drawUnigramLines(data);
         }
     });
+    doc = new jsPDF('p', 'pt', 'a4');
+    doc.addHTML(document.body, () => {
+        doc.save('heat_map.pdf');
+    })
 }
 
 main();
